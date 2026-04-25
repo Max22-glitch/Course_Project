@@ -31,7 +31,7 @@ em++ \
   -s MAXIMUM_MEMORY=1073741824 \
   -s STACK_SIZE=5242880 \
   -s ENVIRONMENT=web \
-  -s EXPORTED_FUNCTIONS='["_run_simulation_json","_malloc","_free"]' \
+  -s EXPORTED_FUNCTIONS='["_run_simulation_json","_get_last_ribs_csv","_malloc","_free"]' \
   -s EXPORTED_RUNTIME_METHODS='["ccall","stringToUTF8","UTF8ToString","lengthBytesUTF8"]' \
   --no-entry \
   -o "$OUT_DIR/bgp_simulator.js"

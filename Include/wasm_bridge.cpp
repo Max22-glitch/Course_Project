@@ -3,6 +3,8 @@
 #include <exception>
 #include <string>
 
+static std::string last_ribs_csv;
+
 static std::string escape_json(const std::string& input) {
     std::string output;
     output.reserve(input.size());
@@ -64,6 +66,16 @@ const char* run_simulation_json(const char* caida_data,
         request.target_asn = target_asn;
 
         SimulationResponse response = run_simulation(request);
+        last_ribs_csv = "asn,prefix,as_path\n";
+
+        for (const auto& entry : response.ribs) {
+            last_ribs_csv += std::to_string(entry.asn);
+            last_ribs_csv += ",";
+            last_ribs_csv += entry.prefix;
+            last_ribs_csv += ",";
+            last_ribs_csv += Output::path_to_string(entry.as_path);
+            last_ribs_csv += "\n";
+        }
 
         response_json = "{";
         response_json += "\"ok\":true,";
@@ -98,19 +110,6 @@ const char* run_simulation_json(const char* caida_data,
             response_json += "}";
         }
 
-        response_json += "],";
-        response_json += "\"ribs_csv\":\"asn,prefix,as_path\\n";
-
-        for (const auto& entry : response.ribs) {
-            response_json += std::to_string(entry.asn);
-            response_json += ",";
-            response_json += escape_json(entry.prefix);
-            response_json += ",";
-            response_json += escape_json(Output::path_to_string(entry.as_path));
-            response_json += "\\n";
-        }
-
-        response_json += "\"";
         response_json += "}";
         return response_json.c_str();
     } catch (const std::exception& error) {
@@ -120,5 +119,10 @@ const char* run_simulation_json(const char* caida_data,
         response_json += "}";
         return response_json.c_str();
     }
+}
+
+EMSCRIPTEN_KEEPALIVE
+const char* get_last_ribs_csv() {
+    return last_ribs_csv.c_str();
 }
 }

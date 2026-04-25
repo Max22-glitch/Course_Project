@@ -222,7 +222,7 @@ async function handleSubmit(event) {
       throw new Error(result.error || "Simulation failed.");
     }
 
-    state.lastRibsCsv = result.ribs_csv;
+    state.lastRibsCsv = "";
     elements.downloadResults.disabled = false;
     renderResults(result, targetAsn);
     setStatus("Simulation complete", `Rendered ${result.target_routes.length} route${result.target_routes.length === 1 ? "" : "s"} for AS${targetAsn}.`);
@@ -253,6 +253,12 @@ async function loadSampleData() {
 
 function downloadResults() {
   if (!state.lastRibsCsv) {
+    const csvPtr = state.module._get_last_ribs_csv();
+    state.lastRibsCsv = state.module.UTF8ToString(csvPtr);
+  }
+
+  if (!state.lastRibsCsv) {
+    setStatus("No export available", "Run a simulation before downloading ribs.csv.");
     return;
   }
 
