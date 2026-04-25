@@ -110,6 +110,7 @@ const char* run_simulation_json(const char* caida_data,
             response_json += "}";
         }
 
+        response_json += "]";
         response_json += "}";
         return response_json.c_str();
     } catch (const std::exception& error) {
