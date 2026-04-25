@@ -37,17 +37,11 @@ static bool is_integer_line(const std::string& s) { //this checks whether the li
     return true;
 }
 
-std::vector<int> RovParser::parse_rov_asns(const std::string& filename) {   //this function reads the list of ASNs that use ROV and returns them
-    std::ifstream file(filename);
-
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open ROV file: " + filename);
-    }
-
+static std::vector<int> parse_rov_stream(std::istream& input) {
     std::vector<int> result;
     std::string line;
 
-    while (std::getline(file, line)) {
+    while (std::getline(input, line)) {
         line = trim(line);
 
         if (line.empty()) {
@@ -69,4 +63,19 @@ std::vector<int> RovParser::parse_rov_asns(const std::string& filename) {   //th
     }
 
     return result;
+}
+
+std::vector<int> RovParser::parse_rov_asns(const std::string& filename) {   //this function reads the list of ASNs that use ROV and returns them
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open ROV file: " + filename);
+    }
+
+    return parse_rov_stream(file);
+}
+
+std::vector<int> RovParser::parse_rov_asns_text(const std::string& contents) {
+    std::istringstream input(contents);
+    return parse_rov_stream(input);
 }

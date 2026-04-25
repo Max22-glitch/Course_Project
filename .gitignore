@@ -1,2 +1,4 @@
 bench/many/ribs.csv
 bench/**/ribs.csv
+web/.emscripten-cache/
+web/.DS_Store

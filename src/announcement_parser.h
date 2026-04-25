@@ -11,4 +11,5 @@ struct AnnouncementSeed {
 class AnnouncementParser {
 public:
     static std::vector<AnnouncementSeed> parse_announcements(const std::string& filename);
+    static std::vector<AnnouncementSeed> parse_announcements_text(const std::string& contents);
 };

@@ -21,9 +21,6 @@ class Graph {   //Graph class stores the full AS graph and provides the main ope
 private:
     std::unordered_map<int, AS> nodes_;
 
-    bool dfs_provider_cycle(int asn,
-                            std::unordered_map<int, int>& state) const;
-
     void send_to_neighbors(int from_asn, const Announcement& ann);
 
     bool can_export_to_customer(const Announcement& ann) const;

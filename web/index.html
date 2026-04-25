@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fourzo BGP Simulator</title>
+  <meta name="description" content="Run BGP propagation experiments entirely in the browser with a polished WASM-powered simulator.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Cloudflare Pages + WebAssembly</p>
+        <h1>Run BGP simulations directly in the browser.</h1>
+        <p class="hero-text">
+          Upload an announcements CSV, choose a target ASN, and inspect the AS paths that reach it.
+          The simulator runs client-side, so the site can be deployed as a static app on <span>fourzo.me</span>.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#simulator">Open simulator</a>
+          <a class="button button-secondary" href="./data/sample_announcements.csv" download>Download sample CSV</a>
+        </div>
+      </div>
+      <section class="hero-card" aria-label="Project summary">
+        <div class="metric-card">
+          <span class="metric-label">Execution</span>
+          <strong>Purely client-side</strong>
+          <p>WASM keeps the simulator local to the browser for cheap, reliable hosting.</p>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Inputs</span>
+          <strong>Announcements CSV + target ASN</strong>
+          <p>Default topology and ROV datasets are bundled with the site for quick testing.</p>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Outputs</span>
+          <strong>Paths at the chosen AS</strong>
+          <p>Results render as a readable table and can be exported back to CSV.</p>
+        </div>
+      </section>
+    </header>
+
+    <main class="main-grid" id="simulator">
+      <section class="panel control-panel">
+        <div class="panel-header">
+          <p class="section-kicker">Simulation inputs</p>
+          <h2>Configure the run</h2>
+        </div>
+
+        <form id="sim-form" class="sim-form">
+          <label class="field">
+            <span>Target ASN</span>
+            <input id="target-asn" name="targetAsn" type="number" min="1" inputmode="numeric" placeholder="Example: 174" required>
+          </label>
+
+          <label class="field">
+            <span>Announcements CSV</span>
+            <input id="announcements-file" name="announcementsFile" type="file" accept=".csv,text/csv" required>
+            <small>Expected columns: <code>seed_asn,prefix,rov_invalid</code></small>
+          </label>
+
+          <div class="toggle-grid">
+            <label class="toggle-card">
+              <input id="use-default-topology" type="checkbox" checked>
+              <span>Use bundled CAIDA topology</span>
+              <small>Recommended for Cloudflare Pages deployment.</small>
+            </label>
+            <label class="toggle-card">
+              <input id="use-default-rov" type="checkbox" checked>
+              <span>Use bundled ROV ASN list</span>
+              <small>Keeps uploads minimal for normal demos.</small>
+            </label>
+          </div>
+
+          <div class="optional-upload-grid">
+            <label class="field">
+              <span>Optional topology file</span>
+              <input id="topology-file" name="topologyFile" type="file" accept=".txt,text/plain" disabled>
+              <small>Only needed if you uncheck the bundled topology.</small>
+            </label>
+            <label class="field">
+              <span>Optional ROV CSV</span>
+              <input id="rov-file" name="rovFile" type="file" accept=".csv,text/csv" disabled>
+              <small>Only needed if you uncheck the bundled ROV list.</small>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="button button-primary" id="run-button" type="submit">Run simulation</button>
+            <button class="button button-secondary" id="load-sample-button" type="button">Use sample data</button>
+          </div>
+        </form>
+
+        <div class="status-panel" id="status-panel" aria-live="polite">
+          <div class="status-pill" id="engine-status">Loading WASM engine…</div>
+          <p id="status-message">Preparing the browser runtime and bundled datasets.</p>
+        </div>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="panel-header">
+          <p class="section-kicker">Results</p>
+          <h2>Announcements visible at the target AS</h2>
+        </div>
+
+        <div class="summary-grid" id="summary-grid">
+          <article class="summary-card">
+            <span class="summary-label">Target ASN</span>
+            <strong id="summary-target">-</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Routes found</span>
+            <strong id="summary-routes">-</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Topology size</span>
+            <strong id="summary-ases">-</strong>
+          </article>
+        </div>
+
+        <div id="warnings" class="notice-list" hidden></div>
+
+        <div class="results-toolbar">
+          <p class="results-caption" id="results-caption">No simulation has been run yet.</p>
+          <button class="button button-secondary" id="download-results" type="button" disabled>Download full ribs.csv</button>
+        </div>
+
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Prefix</th>
+                <th>AS Path</th>
+                <th>Learned Via</th>
+                <th>Next Hop</th>
+                <th>ROV Invalid</th>
+              </tr>
+            </thead>
+            <tbody id="results-body">
+              <tr class="empty-row">
+                <td colspan="5">Run a simulation to inspect the announcements that reach your chosen ASN.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>

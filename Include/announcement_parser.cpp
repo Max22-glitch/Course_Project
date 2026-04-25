@@ -25,19 +25,13 @@ static std::string to_upper(std::string s) {        //this function converts the
     return s;
 }
 
-std::vector<AnnouncementSeed> AnnouncementParser::parse_announcements(const std::string& filename) {        //this function reads the seeded announcements from the given file and returns them as a vector
-    std::ifstream file(filename);
-
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open announcements file: " + filename);
-    }
-
+static std::vector<AnnouncementSeed> parse_announcements_stream(std::istream& input) {
     std::vector<AnnouncementSeed> announcements;
     std::string line;
 
-    std::getline(file, line); // skip header
+    std::getline(input, line); // skip header
 
-    while (std::getline(file, line)) {
+    while (std::getline(input, line)) {
         if (line.empty()) {
             continue;
         }
@@ -60,4 +54,19 @@ std::vector<AnnouncementSeed> AnnouncementParser::parse_announcements(const std:
     }
 
     return announcements;
+}
+
+std::vector<AnnouncementSeed> AnnouncementParser::parse_announcements(const std::string& filename) {        //this function reads the seeded announcements from the given file and returns them as a vector
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open announcements file: " + filename);
+    }
+
+    return parse_announcements_stream(file);
+}
+
+std::vector<AnnouncementSeed> AnnouncementParser::parse_announcements_text(const std::string& contents) {
+    std::istringstream input(contents);
+    return parse_announcements_stream(input);
 }

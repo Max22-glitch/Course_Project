@@ -46,34 +46,42 @@ void Graph::reserve(size_t n) {
 
 bool Graph::has_provider_cycle() const {    //Check whether the graph contains a provider cycle by prreforming dfs on the provider relationships
     std::unordered_map<int, int> state;
+    std::vector<std::pair<int, std::size_t>> stack;
 
     for (const auto& pair : nodes_) {
-        int asn = pair.first;
-        if (state[asn] == 0) {
-            if (dfs_provider_cycle(asn, state)) {
+        const int root_asn = pair.first;
+
+        if (state[root_asn] != 0) {
+            continue;
+        }
+
+        stack.clear();
+        stack.push_back({root_asn, 0});
+        state[root_asn] = 1;
+
+        while (!stack.empty()) {
+            auto& frame = stack.back();
+            const AS& node = nodes_.at(frame.first);
+
+            if (frame.second >= node.providers.size()) {
+                state[frame.first] = 2;
+                stack.pop_back();
+                continue;
+            }
+
+            const int provider = node.providers[frame.second++];
+
+            if (state[provider] == 1) {
                 return true;
+            }
+
+            if (state[provider] == 0) {
+                state[provider] = 1;
+                stack.push_back({provider, 0});
             }
         }
     }
 
-    return false;
-}
-
-bool Graph::dfs_provider_cycle(int asn, std::unordered_map<int, int>& state) const {    //Helper function for cycle detection
-    state[asn] = 1;
-    const AS& node = nodes_.at(asn);
-    for (int provider : node.providers) {
-        if (state[provider] == 1) {
-            return true;
-        }
-
-        if (state[provider] == 0) {
-            if (dfs_provider_cycle(provider, state)) {
-                return true;
-            }
-        }
-    }
-    state[asn] = 2;
     return false;
 }
 

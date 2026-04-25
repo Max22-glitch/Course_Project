@@ -1,50 +1,39 @@
 #include <iostream>
-#include <vector>
-#include "graph.h"
-#include "parser.h"
-#include "announcement.h"
-#include "announcement_parser.h"
-#include "rov_parser.h"
+#include <fstream>
+#include <sstream>
 #include "output.h"
+#include "simulator.h"
 
-int main() {    //this runs the entire program
-    Graph graph;
+static std::string read_file(const std::string& filename) {
+    std::ifstream file(filename);
 
-    Parser::parse_caida("bench/subprefix/CAIDAASGraphCollector_2025.10.16.txt", graph);
-
-    if (graph.has_provider_cycle()) {
-        std::cout << "Provider cycle detected\n";
-        return 1;
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file: " + filename);
     }
 
-    graph.flatten_graph();
+    std::ostringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
 
-    std::vector<int> rov_asns =
-        RovParser::parse_rov_asns("bench/subprefix/rov_asns.csv");
-    graph.mark_rov_asns(rov_asns);
+int main(int argc, char** argv) {    //this runs the entire program
+    const std::string caida_path =
+        argc > 1 ? argv[1] : "bench/subprefix/CAIDAASGraphCollector_2025.10.16.txt";
+    const std::string rov_path =
+        argc > 2 ? argv[2] : "bench/subprefix/rov_asns.csv";
+    const std::string anns_path =
+        argc > 3 ? argv[3] : "bench/subprefix/anns.csv";
+    const std::string output_path =
+        argc > 4 ? argv[4] : "ribs.csv";
 
-    graph.init_policies();
+    SimulationRequest request;
+    request.caida_data = read_file(caida_path);
+    request.rov_csv = read_file(rov_path);
+    request.announcements_csv = read_file(anns_path);
 
-    auto seeds = AnnouncementParser::parse_announcements("bench/subprefix/anns.csv");
+    SimulationResponse response = run_simulation(request);
+    Output::write_ribs(output_path, response.ribs);
 
-    for (const auto& seed : seeds) {
-        if (!graph.has_as(seed.seed_asn)) {
-            std::cout << "Skipping missing ASN: " << seed.seed_asn << "\n";
-            continue;
-        }
-
-        Announcement ann;
-        ann.prefix = seed.prefix;
-        ann.as_path = {seed.seed_asn};
-        ann.next_hop_asn = seed.seed_asn;
-        ann.received_from = Relationship::ORIGIN;
-        ann.rov_invalid = seed.rov_invalid;
-
-        graph.propagate_announcement(seed.seed_asn, ann);
-    }
-
-    Output::write_ribs("ribs.csv", graph);
-
-    std::cout << "Wrote ribs.csv\n";
+    std::cout << "Wrote " << output_path << "\n";
     return 0;
 }

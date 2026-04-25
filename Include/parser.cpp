@@ -3,16 +3,10 @@
 #include <sstream>
 #include <stdexcept>
 
-void Parser::parse_caida(const std::string& filename, Graph& graph) {   //this function reads the AS graph from the CAIDA file and sends it to the graph object
-    std::ifstream file(filename);
-
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open CAIDA file: " + filename);
-    }
-
+static void parse_caida_stream(std::istream& input, Graph& graph) {
     std::string line;
 
-    while (std::getline(file, line)) {
+    while (std::getline(input, line)) {
         if (line.empty() || line[0] == '#') {
             continue;
         }
@@ -38,4 +32,19 @@ void Parser::parse_caida(const std::string& filename, Graph& graph) {   //this f
             graph.add_peer(as1, as2);
         }
     }
+}
+
+void Parser::parse_caida(const std::string& filename, Graph& graph) {   //this function reads the AS graph from the CAIDA file and sends it to the graph object
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open CAIDA file: " + filename);
+    }
+
+    parse_caida_stream(file, graph);
+}
+
+void Parser::parse_caida_text(const std::string& contents, Graph& graph) {
+    std::istringstream input(contents);
+    parse_caida_stream(input, graph);
 }

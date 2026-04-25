@@ -48,13 +48,19 @@ This project implements a basic BGP simulator in C++. It builds an AS graph from
 Compile the simulator:
 
 ```bash
-g++ -std=c++20 -O3 main.cpp graph.cpp parser.cpp bgp.cpp announcement_parser.cpp rov_parser.cpp output.cpp -o simulator
+g++ -std=c++20 -O3 -Isrc Include/main.cpp Include/graph.cpp Include/parser.cpp Include/bgp.cpp Include/announcement_parser.cpp Include/rov_parser.cpp Include/output.cpp Include/simulator.cpp -o simulator
 ```
 
 Run the simulator:
 
 ```bash
 ./simulator
+```
+
+Optional arguments:
+
+```bash
+./simulator <caida_file> <rov_file> <announcements_file> <output_csv>
 ```
 
 Expected output:
@@ -66,6 +72,23 @@ Wrote ribs.csv
 This produces:
 
 - `ribs.csv`
+
+## Web App
+
+The repository also includes a static frontend in [web](/Users/maximusformoso/Desktop/Course_Project/web) that is designed for Cloudflare Pages. It is intended to load the simulator through WebAssembly so users can:
+
+- upload an announcements CSV
+- enter a target ASN
+- inspect the AS paths learned at that ASN
+- download the full generated `ribs.csv`
+
+To build the browser bundle after installing Emscripten:
+
+```bash
+./web/build-wasm.sh
+```
+
+Then serve the `web` folder locally or deploy it directly through Cloudflare Pages.
 
 ## Default Input Files
 
