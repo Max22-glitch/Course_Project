@@ -27,6 +27,7 @@ html {
 body {
   margin: 0;
   font-family: "Instrument Sans", sans-serif;
+  font-weight: 400;
   color: var(--text);
   background:
     radial-gradient(circle at top left, rgba(234, 195, 125, 0.55), transparent 32%),
@@ -89,8 +90,9 @@ body::before {
 
 h1,
 h2 {
-  font-family: "Space Grotesk", sans-serif;
-  letter-spacing: -0.04em;
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.03em;
   margin: 0;
 }
 
@@ -111,11 +113,6 @@ h2 {
   line-height: 1.7;
   max-width: 58ch;
   color: var(--muted);
-}
-
-.hero-text span {
-  color: var(--primary-strong);
-  font-weight: 700;
 }
 
 .hero-actions,
@@ -154,7 +151,8 @@ h2 {
   display: block;
   font-size: 1.2rem;
   margin-bottom: 8px;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 400;
 }
 
 .metric-card p,
@@ -194,7 +192,7 @@ h2 {
 }
 
 .field span {
-  font-weight: 600;
+  font-weight: 400;
 }
 
 input[type="number"],
@@ -235,7 +233,7 @@ input:focus {
 }
 
 .toggle-card span {
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .button {
@@ -243,7 +241,7 @@ input:focus {
   border-radius: 999px;
   padding: 13px 18px;
   font: inherit;
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
@@ -288,7 +286,7 @@ input:focus {
   border-radius: 999px;
   background: rgba(15, 108, 90, 0.1);
   color: var(--primary-strong);
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 10px;
 }
 

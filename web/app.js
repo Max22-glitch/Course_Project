@@ -95,7 +95,7 @@ function renderResults(result, targetAsn) {
   elements.resultsBody.innerHTML = result.target_routes
     .map((route) => `
       <tr>
-        <td><strong>${route.prefix}</strong></td>
+        <td>${route.prefix}</td>
         <td><span class="path-chip">${formatPath(route.as_path)}</span></td>
         <td>${route.received_from}</td>
         <td>AS${route.next_hop_asn}</td>

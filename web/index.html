@@ -7,7 +7,7 @@
   <meta name="description" content="Run BGP propagation experiments entirely in the browser with a polished WASM-powered simulator.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
         <h1>Run BGP simulations directly in the browser.</h1>
         <p class="hero-text">
           Upload an announcements CSV, choose a target ASN, and inspect the AS paths that reach it.
-          The simulator runs client-side, so the site can be deployed as a static app on <span>fourzo.me</span>.
+          The simulator runs in the browser and is available on fourzo.me.
         </p>
         <div class="hero-actions">
           <a class="button button-primary" href="#simulator">Open simulator</a>
@@ -28,8 +28,8 @@
       <section class="hero-card" aria-label="Project summary">
         <div class="metric-card">
           <span class="metric-label">Execution</span>
-          <strong>Purely client-side</strong>
-          <p>WASM keeps the simulator local to the browser for cheap, reliable hosting.</p>
+          <strong>Browser-based simulation</strong>
+          <p>WASM lets the simulator run directly in the browser.</p>
         </div>
         <div class="metric-card">
           <span class="metric-label">Inputs</span>
