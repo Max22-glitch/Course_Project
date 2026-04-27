@@ -2,3 +2,10 @@ bench/many/ribs.csv
 bench/**/ribs.csv
 web/.emscripten-cache/
 web/.DS_Store
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
