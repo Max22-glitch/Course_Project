@@ -90,6 +90,22 @@ To build the browser bundle after installing Emscripten:
 
 Then serve the `web` folder locally or deploy it directly through Cloudflare Pages.
 
+## Deployment
+
+The website version of this project is deployed with Cloudflare Pages and attached to the custom domain `fourzo.me`.
+
+- The frontend lives in the `web/` folder and is published as a static site through Cloudflare Pages.
+- The simulator itself is compiled to WebAssembly, so the routing simulation runs directly in the browser.
+- The Cloudflare Pages project is connected to the GitHub repository, so new pushes to the main branch automatically trigger a fresh deployment.
+- The custom domain `fourzo.me` was used for the public site. If you are describing the student-domain setup for the course, this domain can be noted as coming from the GitHub student benefit/domain workflow you used.
+
+In practice, the deployment flow is:
+
+1. Build the WebAssembly bundle with `./web/build-wasm.sh`.
+2. Commit and push the updated repository to GitHub.
+3. Cloudflare Pages pulls the latest commit and redeploys the `web/` folder.
+4. The updated site becomes available at `https://fourzo.me`.
+
 ## Default Input Files
 
 The current `main.cpp` is configured to use:
